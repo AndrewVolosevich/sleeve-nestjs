@@ -1,11 +1,21 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { ConfigModule } from '@nestjs/config';
+import { UserModule } from './user/user.module';
+
+const environment = process.env.NODE_ENV || 'development';
 
 @Module({
   imports: [
-    MongooseModule.forRoot(
-      'mongodb+srv://nestjs:11945510@cluster0.n3mbp.mongodb.net/sleeve-nestjs?retryWrites=true&w=majority',
-    ),
+    ConfigModule.forRoot({
+      envFilePath: `.env.${environment}`,
+      isGlobal: true,
+    }),
+    MongooseModule.forRoot(process.env.MONGODB_CONNECTION_STRING, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    }),
+    UserModule,
   ],
 })
 export class AppModule {}

@@ -7,9 +7,14 @@ import { ValidationPipe } from '../pipes/validation.pipe';
 export class UserController {
   constructor(private userService: UserService) {}
 
-  @Post()
-  async createUser(@Body(new ValidationPipe()) userDto: UserDto) {
+  @Post('sign_up')
+  async signUp(@Body(new ValidationPipe()) userDto: UserDto) {
     return this.userService.create(userDto);
+  }
+
+  @Post('sign_in')
+  async signIn(@Body(new ValidationPipe()) userDto: UserDto) {
+    return this.userService.login(userDto);
   }
 
   @Get()
@@ -19,6 +24,6 @@ export class UserController {
 
   @Get(':id')
   getUserById(@Param('id') id: string) {
-    return this.userService.finUserdById(id);
+    return this.userService.finUserById(id);
   }
 }

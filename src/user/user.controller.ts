@@ -1,29 +1,20 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Controller, Get, UseGuards, Request } from '@nestjs/common';
 import { UserService } from './user.service';
-import { UserDto } from './dto/user.dto';
-import { ValidationPipe } from '../pipes/validation.pipe';
+import { AuthGuard } from '@nestjs/passport';
 
-@Controller('user')
+@Controller('api/user')
 export class UserController {
   constructor(private userService: UserService) {}
 
-  @Post('sign_up')
-  async signUp(@Body(new ValidationPipe()) userDto: UserDto) {
-    return this.userService.create(userDto);
-  }
-
-  @Post('sign_in')
-  async signIn(@Body(new ValidationPipe()) userDto: UserDto) {
-    return this.userService.login(userDto);
-  }
-
-  @Get()
+  @Get('all')
+  @UseGuards(AuthGuard('jwt'))
   async getAllUsers() {
     return this.userService.findAll();
   }
 
-  @Get(':id')
-  getUserById(@Param('id') id: string) {
-    return this.userService.finUserById(id);
+  @Get('info')
+  @UseGuards(AuthGuard('jwt'))
+  getUserInfo(@Request() req) {
+    return this.userService.getUserInfo(req)
   }
 }
